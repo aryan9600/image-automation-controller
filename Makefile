@@ -170,7 +170,7 @@ manifests: controller-gen	## Generate manifests e.g. CRD, RBAC etc.
 	cd api; $(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role paths="./..." output:crd:artifacts:config="../config/crd/bases"
 
 api-docs: gen-crd-api-reference-docs	## Generate API reference documentation
-	gen-crd-api-reference-docs -api-dir=./api/v1beta1 -config=./hack/api-docs/config.json -template-dir=./hack/api-docs/template -out-file=./docs/api/image-automation.md
+	$(GEN_CRD_API_REFERENCE_DOCS) -api-dir=./api/v1beta1 -config=./hack/api-docs/config.json -template-dir=./hack/api-docs/template -out-file=./docs/api/image-automation.md
 
 tidy:	## Run go mod tidy
 	cd api; rm -f go.sum; go mod tidy
@@ -186,7 +186,7 @@ vet: $(LIBGIT2)	## Run go vet against code
 
 
 generate: controller-gen	## Generate code
-	cd api; controller-gen object:headerFile="../hack/boilerplate.go.txt" paths="./..."
+	cd api; $(CONTROLLER_GEN) object:headerFile="../hack/boilerplate.go.txt" paths="./..."
 
 docker-build:  ## Build the Docker image
 	docker buildx build \
