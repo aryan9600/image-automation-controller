@@ -85,6 +85,13 @@ type PushSpec struct {
 	// Branch specifies that commits should be pushed to the branch
 	// named. The branch is created using `.spec.checkout.branch` as the
 	// starting point, if it doesn't already exist.
-	// +required
-	Branch string `json:"branch"`
+	// +optional
+	Branch string `json:"branch,omitempty"`
+
+	// Refspec specifies the Git Refspec to use for a push operation.
+	// It takes precedence over Branch, i.e. Branch is ignored
+	// if Refspec is non empty. For more details about Git Refspecs, see:
+	// https://git-scm.com/book/en/v2/Git-Internals-The-Refspec
+	// +optional
+	Refspec string `json:"refspec,omitempty"`
 }

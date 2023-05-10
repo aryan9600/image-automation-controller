@@ -406,8 +406,15 @@ type PushSpec struct {
 	// Branch specifies that commits should be pushed to the branch
 	// named. The branch is created using `.spec.checkout.branch` as the
 	// starting point, if it doesn't already exist.
-	// +required
-	Branch string `json:"branch"`
+	// +optional
+	Branch string `json:"branch,omitempty"`
+
+	// Refspec specifies the Git Refspec to use for a push operation.
+	// It takes precedence over Branch, i.e. Branch is ignored
+	// if Refspec is non empty. For more details about Git Refspecs, see:
+	// https://git-scm.com/book/en/v2/Git-Internals-The-Refspec
+	// +optional
+	Refspec string `json:"refspec,omitempty"`
 }
 ```
 
@@ -416,7 +423,11 @@ pushed to the same branch at the origin. If `.spec.git.checkout` is not present,
 to the branch given in the `GitRepository` referenced by `.spec.sourceRef`. If none of these yield a
 branch name, the automation will fail.
 
-When `push` is present, the `branch` field specifies a branch to push to at the origin. The branch
+If `push.refspec` is present, the refspec specified is used to perform the push operation.
+An example of a valid refspec is `refs/heads/branch:refs/heads/branch`. This allows users to push to an
+arbitary destination reference.
+
+If `push.branch` is present, the specified branch is pushed to at the origin. The branch
 will be created locally if it does not already exist, starting from the checkout branch. If it does
 already exist, it will be overwritten with the cloned version plus the changes made by the
 controller. Alternatively, force push can be disabled by starting the controller with `--feature-gates=GitForcePushBranch=false`,
@@ -424,6 +435,8 @@ in which case the updates will be calculated on top of any commits already on th
 Note that without force push in push branches, if the target branch is stale, the controller may not
 be able to conclude the operation and will consistently fail until the branch is either deleted or
 refreshed.
+
+**Note:** If `push.refspec` is specified, then `push.branch` is ignored.
 
 In the following snippet, updates will be pushed as commits to the branch `auto`, and when that
 branch does not exist at the origin, it will be created locally starting from the branch `main`, and
@@ -437,6 +450,21 @@ spec:
         branch: main
     push:
       branch: auto
+```
+
+In the following snippet, updates and commits will be made on the `main` branch locally
+and then pushed to the `qa/main` branch. Note that, the `auto` branch specified in
+`spec.git.push.branch` is ignored.
+
+```yaml
+spec:
+  git:
+    checkout:
+      ref:
+        branch: main
+    push:
+      branch: auto
+      refspec: refs/heads/main:refs/heads/qa/main
 ```
 
 ## Update strategy

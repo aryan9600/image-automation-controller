@@ -638,9 +638,25 @@ string
 </em>
 </td>
 <td>
+<em>(Optional)</em>
 <p>Branch specifies that commits should be pushed to the branch
 named. The branch is created using <code>.spec.checkout.branch</code> as the
 starting point, if it doesn&rsquo;t already exist.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>refspec</code><br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Refspec specifies the Git Refspec to use for a push operation.
+It takes precedence over Branch, i.e. Branch is ignored
+if Refspec is non empty. For more details about Git Refspecs, see:
+<a href="https://git-scm.com/book/en/v2/Git-Internals-The-Refspec">https://git-scm.com/book/en/v2/Git-Internals-The-Refspec</a></p>
 </td>
 </tr>
 </tbody>
