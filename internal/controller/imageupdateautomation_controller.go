@@ -347,10 +347,12 @@ func (r *ImageUpdateAutomationReconciler) Reconcile(ctx context.Context, req ctr
 	}
 
 	// construct the commit message from template and values
-	message, err := templateMsg(gitSpec.Commit.MessageTemplate, &templateValues)
+	template := gitSpec.Commit.MessageTemplate
+	message, err := templateMsg(template, &templateValues)
 	if err != nil {
 		return failWithError(err)
 	}
+	debuglog.Info("commit message templated", "template", template, "commitMessage", message)
 
 	var rev string
 	if len(templateValues.Updated.Files) > 0 {
